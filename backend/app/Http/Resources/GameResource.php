@@ -19,7 +19,7 @@ class GameResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'genre' => $this->genre,
-            'image_url' => $this->image_path ? asset('storage/', $this->image_path) : null,
+            'image_url' => $this->image_path ? asset('storage/'. $this->image_path) : null,
             $this->mergeWhen($this->relationLoaded('products'), fn() => [
                 'currency_name' => $this->currency_name,
                 'account_instructions' => $this->account_instructions,

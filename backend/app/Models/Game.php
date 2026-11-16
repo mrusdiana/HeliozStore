@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Game extends Model
 {
@@ -12,6 +13,8 @@ class Game extends Model
         'name', 'slug', 'genre', 'image_path', 'currency_name',
         'account_instructions', 'account_fields', 'is_active', 'sort_order',
     ];
+
+    protected $appends = ['image_url'];
 
     protected function casts()
     {
@@ -28,5 +31,9 @@ class Game extends Model
 
     public function scopeActive(Builder $query): void {
         $query->where('is_active', true);
+    }
+
+    protected function imageUrl():Attribute {
+        return Attribute::get(fn () => $this->image_path ? asset('storage/'.$this->image_path) : null);
     }
 }
