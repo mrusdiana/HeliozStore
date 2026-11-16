@@ -10,13 +10,17 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->unsignedInteger('quantity');
-            $table->json('account_data');          
-            $table->string('account_key', 150);           
+            $table->string('order_number', 30)->unique();
+            $table->foreignId('user_id')->constrained()->restrictOnDelete();
+            $table->enum('status', ['pending_payment', 'paid', 'completed', 'cancelled'])
+                ->default('pending_payment');
+            $table->decimal('total', 15, 2);
+            $table->timestamp('paid_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
             $table->timestamps();
-            $table->unique(['user_id', 'product_id', 'account_key']);
+
+            $table->index(['user_id', 'created_at']);
+            $table->index('status');
         });
     }
 
