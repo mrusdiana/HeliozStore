@@ -237,12 +237,13 @@ Pembeli yang membuka `/admin/*` diarahkan ke `/` dengan toast "You don't have ac
 
 Semua endpoint di bawah `/api`, JSON. Autentikasi: `Authorization: Bearer <token>`.
 Nominal: bilangan bulat rupiah. Tanggal-waktu: ISO 8601. Gambar: URL lengkap (`image_url`).
+Respons `GET /games` dan `GET /games/{slug}` dibungkus `{ data: ... }` (API Resource Laravel). Paket tanpa foto: frontend memakai gambar game.
 
 ### 8.1 Publik
 
 | Method dan path | Respons |
 |---|---|
-| `POST /register`, `POST /login` | `{ user: { id, name, email, role }, token }` |
+| `POST /auth/register` (201), `POST /auth/login` | `{ user: { id, name, email, role }, token }` |
 | `GET /genres` | `[ "MOBA", "Battle Royale", ... ]` |
 | `GET /home` | `{ banners: [ { id, title, subtitle, image_url, game_slug } ], promos: [ { id, name, image_url, price, original_price, stock, game: { name, slug } } ], games: [ { id, name, slug, image_url } ] }` |
 | `GET /games?search&genre` | `[ { id, name, slug, genre, image_url } ]` |
@@ -252,7 +253,7 @@ Nominal: bilangan bulat rupiah. Tanggal-waktu: ISO 8601. Gambar: URL lengkap (`i
 
 | Method dan path | Respons |
 |---|---|
-| `POST /logout` (204), `GET /me` | `{ id, name, email, role }` |
+| `POST /auth/logout`, `GET /auth/me` | `{ message }` / `{ user: { id, name, email, role } }` |
 | `GET /cart` | `{ items: [ { id, game: { name, slug, image_url }, product: { id, name, price, stock }, quantity, account_data, subtotal, problem } ], total, can_checkout }` |
 | `POST /cart/items` `{ product_id, quantity, account_data: { user_id, zone_id } }` | Keranjang terbaru |
 | `PATCH /cart/items/{id}` `{ quantity }` | Keranjang terbaru |

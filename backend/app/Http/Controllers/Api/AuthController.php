@@ -28,7 +28,7 @@ class AuthController extends Controller
          if(! $user || !Hash::check($request->password, $user->password)) {
             
             throw ValidationException::withMessages([
-                'email' => ["Incorrect email or password"],
+                'email' => ["Incorrect email or password."],
             ]);
          }
 

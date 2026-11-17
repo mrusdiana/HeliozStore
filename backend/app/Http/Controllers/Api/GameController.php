@@ -22,4 +22,9 @@ class GameController extends Controller
 
         return new GameResource($game);
     }
+
+    public function genres()
+    {
+        return Game::active()->distinct()->orderBy('genre')->pluck('genre');
+    }
 }

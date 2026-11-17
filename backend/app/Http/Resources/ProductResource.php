@@ -21,7 +21,11 @@ class ProductResource extends JsonResource
             'item_amount' => $this->item_amount,
             'price' => $this->price,
             'original_price' => $this->original_price,
-            'stock' => $this->stock
+            'stock' => $this->stock,
+            'game' => $this->whenLoaded('game', fn () => [
+                'name' => $this->game->name,
+                'slug' => $this->game->slug,
+            ]),
         ];
     }
 }
