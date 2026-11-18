@@ -21,6 +21,7 @@ class CatalogSeeder extends Seeder
                 'account_instructions' => $data['instructions'],
                 'account_fields'       => $data['fields'],
                 'image_path'           => $this->image('games', $data['slug']),
+                'banner_path'          => $this->image('banners', $data['slug']),
                 'is_active'            => true,
                 'sort_order'           => $sort,
             ]);
@@ -161,6 +162,87 @@ class CatalogSeeder extends Seeder
                 'packages' => [
                     [31, 5000, null, 999], [63, 10000, null, 999], [128, 20000, null, 999], [321, 50000, null, 999],
                     [645, 100000, null, 999], [1373, 200000, null, 999], [3564, 500000, null, 999],
+                ],
+            ],
+            [
+                'slug' => 'magic-chess-go-go', 'name' => 'Magic Chess Go Go', 'genre' => 'Strategy', 'currency' => 'Diamonds',
+                'instructions' => 'Tap your avatar to see your User ID and Server ID, for example 123456789 (1234).',
+                'fields' => [
+                    $this->numeric('user_id', 'User ID', 5, 12, '123456789'),
+                    $this->numeric('zone_id', 'Server ID', 3, 5, '1234'),
+                ],
+                'packages' => [
+                    [5, 1500, null, 999], [12, 3500, null, 999], [28, 8000, null, 999], [59, 16000, null, 999],
+                    [85, 23000, 25000, 999], [170, 46000, null, 999], [296, 79000, null, 999], [568, 150000, null, 999],
+                ],
+            ],
+            [
+                'slug' => 'free-fire-max', 'name' => 'Free Fire MAX', 'genre' => 'Battle Royale', 'currency' => 'Diamonds',
+                'instructions' => 'Your Player ID is under your nickname on the profile page.',
+                'fields' => [$this->numeric('player_id', 'Player ID', 6, 12, '123456789')],
+                'packages' => [
+                    [5, 1000, null, 999], [50, 7500, null, 999], [70, 10000, null, 999], [140, 20000, null, 999],
+                    [355, 50000, 52000, 999], [720, 100000, null, 999], [1450, 200000, null, 999], [3640, 500000, null, 999],
+                ],
+            ],
+            [
+                'slug' => 'blood-strike', 'name' => 'Blood Strike', 'genre' => 'FPS', 'currency' => 'Gold',
+                'instructions' => 'Open Settings, then Account. Copy the numeric ID shown there.',
+                'fields' => [$this->numeric('player_id', 'Player ID', 6, 15, '1234567890')],
+                'packages' => [
+                    [100, 15000, null, 999], [300, 45000, null, 999], [500, 72000, 75000, 999], [1000, 145000, null, 999],
+                    [2000, 290000, null, 999], [5000, 720000, null, 999],
+                ],
+            ],
+            [
+                'slug' => 'delta-force', 'name' => 'Delta Force', 'genre' => 'FPS', 'currency' => 'Delta Coins',
+                'instructions' => 'Open your profile card in the lobby to find your UID.',
+                'fields' => [$this->numeric('player_id', 'UID', 6, 20, '1234567890')],
+                'packages' => [
+                    [60, 15000, null, 999], [320, 75000, null, 999], [460, 105000, null, 999], [750, 165000, 175000, 999],
+                    [1480, 330000, null, 999], [3950, 820000, null, 999],
+                ],
+            ],
+            [
+                'slug' => 'honkai-star-rail', 'name' => 'Honkai: Star Rail', 'genre' => 'RPG', 'currency' => 'Oneiric Shards',
+                'instructions' => 'Your UID is in the bottom-left corner of the phone menu. Pick your server below.',
+                'fields' => [
+                    $this->numeric('uid', 'UID', 9, 10, '800123456'),
+                    $this->text('server', 'Server', 2, 10, 'Asia'),
+                ],
+                'packages' => [
+                    [60, 16000, null, 999], [300, 79000, null, 999], [980, 249000, null, 999],
+                    [1980, 479000, 499000, 999], [3280, 799000, null, 999], [6480, 1599000, null, 999],
+                ],
+            ],
+            [
+                'slug' => 'zenless-zone-zero', 'name' => 'Zenless Zone Zero', 'genre' => 'RPG', 'currency' => 'Monochrome',
+                'instructions' => 'Your UID is shown on the profile screen. Pick your server below.',
+                'fields' => [
+                    $this->numeric('uid', 'UID', 9, 10, '1300123456'),
+                    $this->text('server', 'Server', 2, 10, 'Asia'),
+                ],
+                'packages' => [
+                    [60, 16000, null, 999], [300, 79000, null, 999], [980, 249000, null, 999],
+                    [1980, 479000, null, 999], [3280, 799000, 829000, 999], [6480, 1599000, null, 999],
+                ],
+            ],
+            [
+                'slug' => 'arena-of-valor', 'name' => 'Arena of Valor', 'genre' => 'MOBA', 'currency' => 'Vouchers',
+                'instructions' => 'Open your profile to copy your Open ID.',
+                'fields' => [$this->numeric('player_id', 'Open ID', 6, 20, '123456789012')],
+                'packages' => [
+                    [40, 10000, null, 999], [90, 20000, null, 999], [230, 50000, null, 999],
+                    [470, 100000, 105000, 999], [950, 200000, null, 999], [2420, 500000, null, 999],
+                ],
+            ],
+            [
+                'slug' => 'efootball', 'name' => 'eFootball', 'genre' => 'Sports', 'currency' => 'eFootball Coins',
+                'instructions' => 'Go to Extras, then User Information, and copy your Owner ID.',
+                'fields' => [$this->text('owner_id', 'Owner ID', 6, 20, 'ABCD-123-456-789')],
+                'packages' => [
+                    [130, 15000, null, 999], [300, 33000, null, 999], [550, 59000, null, 999],
+                    [1040, 109000, 115000, 999], [2130, 219000, null, 999], [3250, 329000, null, 999],
                 ],
             ],
         ];
