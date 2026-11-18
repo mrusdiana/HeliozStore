@@ -72,7 +72,7 @@ Heading **Russo One**, teks **Chakra Petch** (400, 500, 600). Cadangan: `system-
 | Skala jarak | 4, 8, 12, 16, 24, 32, 48px |
 | Radius | 10px tombol/input; 14px kartu; gambar game 12px |
 | Sudut "futuristik" | Kartu game dan tombol utama boleh memakai satu sudut terpotong (`clip-path`) sebagai aksen |
-| Rasio gambar game | 3:4 (poster) di kartu katalog; 16:9 di banner halaman game |
+| Rasio gambar game | 1:1 (ikon game) di kartu katalog dan admin; header halaman game 16:9 memakai banner game itu kalau ada, kalau tidak ikon 1:1 di atas latar gelap |
 | Transisi | 150–200ms untuk warna, border, glow, dan `transform: scale(1.02)` saat hover |
 | Gerak | Mati saat `prefers-reduced-motion` |
 | Tinggi elemen interaktif | Minimal 44px |
@@ -97,7 +97,7 @@ Wajib diuji pada 375, 768, 1024, dan 1440px tanpa scroll horizontal.
 | **Field** (text, numeric, email, password, select, textarea, file, toggle) | default, focus (glow), error, disabled | Label di atas, petunjuk format di bawah ("5–12 digits"), galat menggantikan petunjuk. |
 | **HeroCarousel** | auto-play, paused, single | Selebar layar (rasio ±16:5 desktop, 16:9 mobile), gambar banner + overlay gelap bergradien tipis di sisi teks + judul (Russo One) + subjudul promo + tombol "Top up now". Berganti tiap 5 detik dengan transisi geser/fade 400ms. Tombol ‹ › dan indikator titik. Berhenti saat hover/fokus/sentuh; tanpa auto-play bila `prefers-reduced-motion`. Satu banner: tanpa navigasi. |
 | **PromoCard** | default, hover, out of stock | Foto paket 1:1, nama game (kecil), nama paket, harga normal dicoret (`--muted`), harga jual (`--primary`), badge "Promo" (`--hot`). Klik → halaman game dengan paket terpilih. |
-| **GameCard** | default, hover, inactive | Gambar 3:4 dan nama game **saja** (tanpa harga). Hover: sedikit membesar + glow border. |
+| **GameCard** | default, hover, inactive | Gambar 1:1 dan nama game **saja** (tanpa harga). Hover: sedikit membesar + glow border. |
 | **PackageTile** | default, hover, selected, out of stock | Foto paket (atau ikon mata uang), jumlah ("86 Diamonds"), harga; bila promo: harga normal dicoret + badge "Promo". Terpilih: border `--primary` + glow + ikon centang. Habis: redup + "Out of stock". Opsional badge "Hot". |
 | **AccountForm** | empty, valid, error | Field dibuat dari `account_fields` game. Petunjuk pengisian game (misalnya "Find your ID in Profile") di atas. |
 | **StepHeader** | — | Nomor langkah dalam lingkaran neon + judul ("1. Enter account details", "2. Select a package"). |
@@ -188,7 +188,7 @@ Frontend tidak pernah mengubah status sendiri; status selalu diambil dari backen
 |---|---|---|
 | `/admin/orders` | **Orders** | DataTable: nomor, tanggal, pembeli, total, status. Filter status + cari nomor. |
 | `/admin/orders/:number` | **Order detail** | Pembeli, item + data akun (bisa disalin dengan tombol copy), pembayaran, status. Paid yang belum selesai: tombol "Mark as completed". |
-| `/admin/games` | **Games** | DataTable: poster kecil, nama, genre, jumlah paket, Active, urutan, aksi. Tombol "New game". |
+| `/admin/games` | **Games** | DataTable: ikon kecil, nama, genre, jumlah paket, Active, urutan, aksi. Tombol "New game". |
 | `/admin/games/new`, `/admin/games/:id/edit` | **Game form** | Name, Genre, Image (ImageUpload), Currency name, Account instructions, AccountFieldsEditor, Active, Sort order. |
 | `/admin/packages` | **Packages** | Filter per game; DataTable: game, nama paket, jumlah item, harga, stok, Active, aksi. Tombol "New package". |
 | `/admin/packages/new`, `/admin/packages/:id/edit` | **Package form** | Game, Name, Image (opsional), Item amount, Price, Original price (opsional; diisi = promo, harus lebih besar dari Price), Stock, Active. Hapus paket yang pernah dipesan ditolak: "Set it to inactive instead". |

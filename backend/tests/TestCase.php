@@ -5,9 +5,17 @@ namespace Tests;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // test tidak boleh memanggil Midtrans sungguhan
+        Http::preventStrayRequests();
+    }
+
     protected function admin(): User
     {
         $user = User::factory()->create();

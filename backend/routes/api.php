@@ -32,6 +32,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/{order}', [OrderController::class, 'show']);
+    Route::post('/orders', [OrderController::class, 'store']);
+    Route::post('/orders/{order}/pay', [OrderController::class, 'pay']);
+    Route::post('/orders/{order}/check-payment', [OrderController::class, 'checkPayment']);
 
     // Admin
     Route::middleware('admin')->prefix('admin')->group(function () {
