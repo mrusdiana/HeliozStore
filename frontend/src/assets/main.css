@@ -1,0 +1,112 @@
+@import 'tailwindcss';
+
+/* Design tokens from DESIGN.md §2 (v3 Immersive Royal Blue). Use as Tailwind classes: bg-surface, text-muted, border-line, etc. */
+@theme {
+  --color-bg: #05080f;
+  --color-surface: #0a1020;
+  --color-surface-2: #101931;
+  --color-glass: rgb(10 16 32 / 0.78);
+  --color-line: rgb(96 165 250 / 0.12);
+  --color-specular: rgb(96 165 250 / 0.35);
+  --color-text: #f1f5f9;
+  --color-muted: #8a9bb8;
+  --color-primary: #3b82f6;
+  --color-primary-hover: #60a5fa;
+  --color-on-primary: #04102a;
+  --color-secondary: #1d4ed8;
+  --color-hot: #fb7185;
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --radius-btn: 12px;
+  --radius-card: 16px;
+  --radius-img: 14px;
+
+  --shadow-glow: 0 0 0 1px rgb(59 130 246 / 0.6), 0 10px 30px -6px rgb(59 130 246 / 0.35);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-bg font-sans text-[15px] leading-normal text-text antialiased;
+    background-image:
+      radial-gradient(ellipse 70% 50% at 50% -10%, rgb(37 99 235 / 0.3), transparent 70%),
+      radial-gradient(ellipse 40% 40% at 100% 0%, rgb(59 130 246 / 0.12), transparent 70%);
+    background-repeat: no-repeat;
+    min-height: 100dvh;
+  }
+  h1, h2, h3 {
+    @apply font-display;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Base button as a utility so the variants below can @apply it (Tailwind v4 rule). */
+@utility btn {
+  @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-btn px-4 text-sm font-semibold whitespace-nowrap transition duration-200 ease-out-soft disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+/* A few reusable classes so templates stay short. Everything else is plain Tailwind utilities. */
+@layer components {
+  .container-app {
+    @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6;
+  }
+  .card {
+    @apply rounded-card border border-line bg-surface;
+    background-image: linear-gradient(180deg, rgb(59 130 246 / 0.05), transparent 40%);
+  }
+  .btn-primary {
+    @apply btn bg-primary text-on-primary hover:bg-primary-hover hover:shadow-glow;
+  }
+  .btn-secondary {
+    @apply btn border border-specular bg-surface-2 text-text hover:border-primary;
+  }
+  .btn-ghost {
+    @apply btn text-muted hover:bg-surface-2 hover:text-text;
+  }
+  .btn-danger {
+    @apply btn border border-danger/40 bg-danger/10 text-danger hover:bg-danger/20;
+  }
+  .btn-icon {
+    @apply btn size-11 px-0;
+  }
+  .field {
+    @apply min-h-11 w-full rounded-btn border border-line bg-surface-2 px-3.5 text-text placeholder:text-muted/70 transition duration-200 focus:border-primary focus:shadow-glow focus:outline-none aria-invalid:border-danger;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-semibold;
+  }
+  .hint {
+    @apply mt-1.5 text-[13px] text-muted;
+  }
+  .error-text {
+    @apply mt-1.5 text-[13px] text-danger;
+  }
+  .price {
+    @apply font-mono font-semibold whitespace-nowrap tabular-nums;
+  }
+  .pill {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap;
+  }
+  .skeleton {
+    @apply animate-pulse rounded-card bg-surface-2;
+  }
+}
