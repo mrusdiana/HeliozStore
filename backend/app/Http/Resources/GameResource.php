@@ -21,6 +21,7 @@ class GameResource extends JsonResource
             'genre' => $this->genre,
             'image_url' => $this->image_path ? asset('storage/'. $this->image_path) : null,
             $this->mergeWhen($this->relationLoaded('products'), fn() => [
+                'banner_url' => $this->banner_path ? asset('storage/'.$this->banner_path) : null,
                 'currency_name' => $this->currency_name,
                 'account_instructions' => $this->account_instructions,
                 'account_fields' => $this->account_fields,

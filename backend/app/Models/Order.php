@@ -13,7 +13,7 @@ class Order extends Model
     public const STATUS_COMPLETED = 'completed';
     public const STATUS_CANCELLED = 'cancelled';
 
-    protected $fillable = ['order_number', 'user_id', 'status', 'total', 'paid_at', 'completed_at'];
+    protected $fillable = ['order_number', 'user_id', 'contact_email', 'contact_whatsapp', 'status', 'total', 'paid_at', 'completed_at'];
 
     protected function casts(): array
     {

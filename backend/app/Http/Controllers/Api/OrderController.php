@@ -32,23 +32,20 @@ class OrderController extends Controller
     {
         abort_if($order->user_id !== $request->user()->id, 404);
 
-        // cek status ke Midtrans; kalau Midtrans mati, tampilkan order apa adanya (FR-7.2)
-        $order = rescue(fn () => $midtrans->sync($order), $order, false);
-
-        // cadangan kalau queue worker mati (FR-8.2)
-        if ($order->status === Order::STATUS_PAID && $order->paid_at?->lt(now()->subSeconds(10))) {
-            $order->update(['status' => Order::STATUS_COMPLETED, 'completed_at' => now()]);
-        }
+        $order = $midtrans->refresh($order);
 
         return new OrderResource($order->load('items'));
     }
 
     public function store(StoreOrderRequest $request, MidtransService $midtrans)
     {
-        $user = $request->user();
+        // Route ini publik (Buy now tamu), jadi user diambil dari token kalau ada.
+        $user = $request->user('sanctum');
 
         if($request->source === 'cart')
         {
+            abort_unless($user, 401, 'Sign in to check out your cart.');
+
             $lines = $user->cartItems()->get()->map(fn ($item) => [
                 'product_id' => $item->product_id,
                 'quantity' => $item->quantity,
@@ -88,7 +85,10 @@ class OrderController extends Controller
                 }
             }
 
-            $order = $user->orders()->create([
+            $order = Order::create([
+                'user_id' => $user?->id,
+                'contact_email' => $request->contact_email ?? $user?->email,
+                'contact_whatsapp' => $request->contact_whatsapp,
                 'order_number' => $this->newOrderNumber(),
                 'status' => Order::STATUS_PENDING_PAYMENT,
                 'total' => $lines->sum(fn ($l) => (int) $products[$l['product_id']]->price * $l['quantity']),
@@ -119,7 +119,7 @@ class OrderController extends Controller
 
         return response()->json([
             'order' => new OrderResource($order->load('items')),
-            'snap_token' => $midtrans->createSnapToken($order),
+            'snap_token' => $midtrans->createSnapToken($order, $request->payment_method),
         ], 201);
         
     }

@@ -26,11 +26,13 @@ class OrderResource extends JsonResource
                 'account_data' => $item->account_data,
             ]),
             // hanya untuk admin: pembeli dan riwayat pembayaran (FR-10.2)
-            'customer'     => $this->whenLoaded('user', fn () => [
+            'contact'      => ['email' => $this->contact_email, 'whatsapp' => $this->contact_whatsapp],
+            // null = pembelian tamu
+            'customer'     => $this->whenLoaded('user', fn () => $this->user ? [
                 'id'    => $this->user->id,
                 'name'  => $this->user->name,
                 'email' => $this->user->email,
-            ]),
+            ] : null),
             'payments'     => $this->whenLoaded('payments', fn () => $this->payments->map(fn ($p) => [
                 'id'                 => $p->id,
                 'provider'           => $p->provider,

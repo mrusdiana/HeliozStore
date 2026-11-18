@@ -24,19 +24,53 @@ class MidtransService
     }
 
     // Minta token pembayaran ke Midtrans, lalu catat di tabel payments
-    public function createSnapToken(Order $order): string
+    // Pilihan metode di frontend → nama channel Snap untuk `enabled_payments`.
+    public const PAYMENT_METHODS = [
+        'qris'       => 'other_qris',
+        'gopay'      => 'gopay',
+        'shopeepay'  => 'shopeepay',
+        'bca_va'     => 'bca_va',
+        'bni_va'     => 'bni_va',
+        'bri_va'     => 'bri_va',
+        'mandiri_va' => 'echannel',
+        'permata_va' => 'permata_va',
+        'indomaret'  => 'indomaret',
+        'alfamart'   => 'alfamart',
+    ];
+
+    // Cek status ke Midtrans (kalau Midtrans mati, pakai data apa adanya), lalu selesaikan order Paid > 10 detik
+    // sebagai cadangan kalau queue worker mati. Dipakai halaman detail order dan lacak pesanan.
+    public function refresh(Order $order): Order
     {
+        $order = rescue(fn () => $this->sync($order), $order, false);
+
+        if ($order->status === Order::STATUS_PAID && $order->paid_at?->lt(now()->subSeconds(10))) {
+            $order->update(['status' => Order::STATUS_COMPLETED, 'completed_at' => now()]);
+        }
+
+        return $order;
+    }
+
+    public function createSnapToken(Order $order, ?string $method = null): string
+    {
+        $payload = [
+            'transaction_details' => [
+                'order_id'     => $order->order_number,
+                'gross_amount' => $order->total,
+            ],
+            'customer_details' => [
+                'first_name' => $order->user?->name ?? 'Guest',
+                'email'      => $order->contact_email ?? $order->user?->email,
+            ],
+        ];
+
+        // Kalau pembeli sudah memilih metode, popup Snap langsung membuka metode itu.
+        if ($method && isset(self::PAYMENT_METHODS[$method])) {
+            $payload['enabled_payments'] = [self::PAYMENT_METHODS[$method]];
+        }
+
         try {
-            $res = $this->http()->post(config('services.midtrans.snap_url'), [
-                'transaction_details' => [
-                    'order_id'     => $order->order_number,
-                    'gross_amount' => $order->total,
-                ],
-                'customer_details' => [
-                    'first_name' => $order->user->name,
-                    'email'      => $order->user->email,
-                ],
-            ]);
+            $res = $this->http()->post(config('services.midtrans.snap_url'), $payload);
         } catch (ConnectionException) {
             $this->unavailable();
         }

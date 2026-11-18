@@ -13,11 +13,11 @@ class Game extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'slug', 'genre', 'image_path', 'currency_name',
+        'name', 'slug', 'genre', 'image_path', 'banner_path', 'currency_name',
         'account_instructions', 'account_fields', 'is_active', 'sort_order',
     ];
 
-    protected $appends = ['image_url'];
+    protected $appends = ['image_url', 'banner_url'];
 
     protected function casts()
     {
@@ -38,6 +38,10 @@ class Game extends Model
 
     public function scopeActive(Builder $query): void {
         $query->where('is_active', true);
+    }
+
+    protected function bannerUrl(): Attribute {
+        return Attribute::get(fn () => $this->banner_path ? asset('storage/'.$this->banner_path) : null);
     }
 
     protected function imageUrl():Attribute {

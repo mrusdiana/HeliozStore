@@ -23,11 +23,15 @@ class GameController extends Controller
 
     public function store(GameRequest $request)
     {
-        $data = $request->safe()->except('image');
+        $data = $request->safe()->except(['image', 'banner']);
         $data['slug'] = $this->uniqueSlug($data['name']);
 
         if ($request->hasFile('image')) {
             $data['image_path'] = $request->file('image')->store('games', 'public');
+        }
+
+        if ($request->hasFile('banner')) {
+            $data['banner_path'] = $request->file('banner')->store('game-banners', 'public');
         }
 
         return response()->json(Game::create($data), 201);
@@ -35,7 +39,7 @@ class GameController extends Controller
 
     public function update(GameRequest $request, Game $game)
     {
-        $data = $request->safe()->except('image');
+        $data = $request->safe()->except(['image', 'banner']);
 
         if ($data['name'] !== $game->name) {
             $data['slug'] = $this->uniqueSlug($data['name'], $game->id);
@@ -49,6 +53,14 @@ class GameController extends Controller
             }
 
             $data['image_path'] = $request->file('image')->store('games', 'public');
+        }
+
+        if ($request->hasFile('banner')) {
+            if ($game->banner_path) {
+                Storage::disk('public')->delete($game->banner_path);
+            }
+
+            $data['banner_path'] = $request->file('banner')->store('game-banners', 'public');
         }
 
         $game->update($data);
@@ -67,6 +79,10 @@ class GameController extends Controller
 
         if($game->image_path) {
             Storage::disk('public')->delete($game->image_path);
+        }
+
+        if ($game->banner_path) {
+            Storage::disk('public')->delete($game->banner_path);
         }
 
         $game->delete();

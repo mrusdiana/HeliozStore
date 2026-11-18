@@ -49,6 +49,18 @@ class AdminCatalogTest extends TestCase
         Storage::disk('public')->assertExists($new['image_path']);
     }
 
+    public function test_game_banner_upload_is_stored_and_exposed(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $game = $this->actingAs($admin)->post('/api/admin/games', $this->gameForm(['banner' => $this->png('wide.png')]), ['Accept' => 'application/json'])
+            ->assertCreated()->json();
+
+        Storage::disk('public')->assertExists($game['banner_path']);
+        $this->getJson("/api/games/{$game['slug']}")->assertOk()->assertJsonPath('data.banner_url', asset('storage/'.$game['banner_path']));
+    }
+
     public function test_game_validation(): void
     {
         $this->actingAs($this->admin())->postJson('/api/admin/games', $this->gameForm(['account_fields' => []]))

@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\TrackOrderController;
 use Illuminate\Support\Facades\Route;
 
 // Public
@@ -19,6 +20,11 @@ Route::get('/home', HomeController::class);
 Route::get('/genres', [GameController::class, 'genres']);
 Route::get('/games', [GameController::class, 'index']);
 Route::get('/games/{slug}', [GameController::class, 'show']);
+
+// Buy now tamu + lacak pesanan (publik)
+Route::post('/orders', [OrderController::class, 'store'])->middleware('throttle:20,1');
+Route::get('/orders/track', [TrackOrderController::class, 'show'])->middleware('throttle:20,1');
+Route::post('/orders/track/pay', [TrackOrderController::class, 'pay'])->middleware('throttle:20,1');
 
 // Wajib login
 Route::middleware('auth:sanctum')->group(function () {
@@ -32,12 +38,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/{order}', [OrderController::class, 'show']);
-    Route::post('/orders', [OrderController::class, 'store']);
     Route::post('/orders/{order}/pay', [OrderController::class, 'pay']);
     Route::post('/orders/{order}/check-payment', [OrderController::class, 'checkPayment']);
 
     // Admin
     Route::middleware('admin')->prefix('admin')->group(function () {
+        Route::get('/dashboard', \App\Http\Controllers\Api\Admin\DashboardController::class);
         Route::apiResource('games', AdminGameController::class);
         Route::apiResource('products', AdminProductController::class);
         Route::apiResource('banners', AdminBannerController::class);

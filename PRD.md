@@ -1,4 +1,4 @@
-# PRD: Game Top-Up Store (E-Commerce Website)
+# PRD: HeliozStore.com — Game Top-Up Store (E-Commerce Website)
 
 ## Context
 
@@ -93,6 +93,7 @@ Persona berikut adalah ilustrasi, bukan hasil riset pengguna.
 
 **Pembeli**
 - **Akun:** Sebagai pembeli, saya ingin mendaftar, masuk, dan keluar agar keranjang dan pesanan saya tersimpan.
+- **Tamu:** Sebagai pengunjung tanpa akun, saya ingin membeli satu paket dengan Buy now dan melacak pesanan memakai nomor transaksi dan email saya.
 - **Promo:** Sebagai pembeli, saya ingin langsung melihat promo yang sedang berlaku di beranda agar bisa membeli dengan harga lebih murah.
 - **Katalog game:** Sebagai pembeli, saya ingin melihat daftar game beserta gambarnya agar bisa memilih game yang saya mainkan.
 - **Cari & filter:** Sebagai pembeli, saya ingin mencari game berdasarkan nama dan memfilter berdasarkan genre.
@@ -119,7 +120,9 @@ Persona berikut adalah ilustrasi, bukan hasil riset pengguna.
 
 ## 6. Functional requirements MVP
 
-Semua API memakai JSON. Endpoint pembeli dan admin mewajibkan autentikasi, kecuali katalog game, halaman game, daftar, dan masuk.
+Semua API memakai JSON. Endpoint pembeli dan admin mewajibkan autentikasi, kecuali katalog game, halaman game, daftar, masuk, **Buy now sebagai tamu**, dan **lacak pesanan**.
+
+**Pembelian tamu (guest checkout, 18 Nov 2026):** pengunjung tanpa akun boleh membeli lewat Buy now dengan mengisi email kontak (WhatsApp opsional). Status pesanan dilacak secara publik lewat **nomor transaksi + email kontak** (keduanya wajib, supaya data akun game orang lain tidak bisa dilihat hanya dengan menebak nomor). Keranjang dan riwayat pesanan tetap khusus akun yang masuk, sehingga fitur wajib "akun pengguna" dan "keranjang belanja" tetap terpenuhi.
 Data milik pengguna lain menghasilkan 404. Endpoint admin menolak non-admin dengan 403. Semua UI responsif.
 
 ### FR-1 Autentikasi dan peran

@@ -20,7 +20,7 @@ class HomeController extends Controller
             ),
             'promos' => ProductResource::collection(
                 Product::purchasable()->promo()->where('stock', '>', 0)
-                    ->with('game:id,name,slug')->latest('updated_at')->limit(8)->get()
+                    ->with('game:id,name,slug,currency_name')->latest('updated_at')->limit(8)->get()
             ),
             'games' => GameResource::collection(
                 Game::active()->orderBy('sort_order')->orderBy('name')->get()

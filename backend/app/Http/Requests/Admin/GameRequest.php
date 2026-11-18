@@ -23,6 +23,7 @@ class GameRequest extends FormRequest
             'name' => ['required', 'string', 'max:100'],
             'genre' => ['required', 'string', 'max:50'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'currency_name' => ['required', 'string', 'max:50'],
             'account_instructions'   => ['nullable', 'string', 'max:500'],
             'account_fields'         => ['required', 'array', 'min:1'],

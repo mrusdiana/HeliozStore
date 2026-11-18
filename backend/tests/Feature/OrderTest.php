@@ -79,4 +79,24 @@ class OrderTest extends TestCase
         $this->actingAs($admin)->postJson('/api/admin/orders/TOP-UNPAID/complete')->assertStatus(409);
         $this->actingAs(User::factory()->create())->postJson('/api/admin/orders/TOP-PAID/complete')->assertForbidden();
     }
+
+    public function test_admin_dashboard_summarises_sales(): void
+    {
+        $buyer = User::factory()->create();
+        $paid = $this->order($buyer, Order::STATUS_PAID, 'TOP-D1');
+        $paid->update(['paid_at' => now()]);
+        $this->order($buyer, Order::STATUS_PENDING_PAYMENT, 'TOP-D2');
+
+        $res = $this->actingAs($this->admin())->getJson('/api/admin/dashboard')
+            ->assertOk()
+            ->assertJsonPath('today.revenue', 20000)
+            ->assertJsonPath('today.orders', 2)
+            ->assertJsonPath('pending_payment', 1)
+            ->assertJsonPath('to_process', 1)
+            ->assertJsonCount(7, 'revenue_7d')
+            ->assertJsonCount(2, 'recent_orders');
+
+        $this->assertSame(100.0, (float) $res->json('top_games.0.percent'));
+        $this->actingAs($buyer)->getJson('/api/admin/dashboard')->assertForbidden();
+    }
 }

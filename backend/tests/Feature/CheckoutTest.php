@@ -66,6 +66,24 @@ class CheckoutTest extends TestCase
         $this->assertDatabaseHas('payments', ['snap_token' => 'snap-123', 'status' => 'pending']);
     }
 
+    public function test_payment_method_is_sent_to_snap_and_validated(): void
+    {
+        $this->fakeMidtrans();
+
+        $this->actingAs($this->user)->postJson('/api/orders', [
+            'source' => 'buy_now', 'product_id' => $this->product->id, 'quantity' => 1,
+            'account_data' => $this->account, 'payment_method' => 'qris',
+        ])->assertCreated();
+
+        Http::assertSent(fn ($req) => str_contains($req->url(), 'app.sandbox')
+            && $req['enabled_payments'] === ['other_qris']);
+
+        $this->actingAs($this->user)->postJson('/api/orders', [
+            'source' => 'buy_now', 'product_id' => $this->product->id, 'quantity' => 1,
+            'account_data' => $this->account, 'payment_method' => 'bitcoin',
+        ])->assertUnprocessable()->assertJsonValidationErrors('payment_method');
+    }
+
     public function test_buy_now_keeps_cart_untouched(): void
     {
         $this->fakeMidtrans();
@@ -179,5 +197,39 @@ class CheckoutTest extends TestCase
         $this->artisan('orders:sync-pending')->assertSuccessful();
 
         $this->assertSame('paid', Order::first()->status);
+    }
+
+    public function test_guest_can_buy_now_with_contact_email_and_track_the_order(): void
+    {
+        $this->fakeMidtrans();
+        $payload = [
+            'source' => 'buy_now', 'product_id' => $this->product->id, 'quantity' => 1,
+            'account_data' => $this->account, 'payment_method' => 'qris',
+        ];
+
+        $this->postJson('/api/orders', $payload)->assertUnprocessable()->assertJsonValidationErrors('contact_email');
+        $this->postJson('/api/orders', ['source' => 'cart'])->assertUnauthorized();
+
+        $number = $this->postJson('/api/orders', $payload + ['contact_email' => 'guest@example.com', 'contact_whatsapp' => '081234567890'])
+            ->assertCreated()
+            ->assertJsonPath('order.contact.email', 'guest@example.com')
+            ->json('order.order_number');
+
+        $this->assertDatabaseHas('orders', ['order_number' => $number, 'user_id' => null]);
+        Http::assertSent(fn ($req) => str_contains($req->url(), 'app.sandbox') && $req['customer_details']['email'] === 'guest@example.com');
+
+        $this->getJson("/api/orders/track?number={$number}&email=GUEST@example.com")
+            ->assertOk()->assertJsonPath('data.order_number', $number);
+        $this->getJson("/api/orders/track?number={$number}&email=other@example.com")->assertNotFound();
+        $this->getJson('/api/orders/track?number=TOP-NOPE&email=guest@example.com')->assertNotFound();
+
+        $this->postJson('/api/orders/track/pay', ['number' => $number, 'email' => 'guest@example.com'])
+            ->assertOk()->assertJsonPath('snap_token', 'snap-123');
+    }
+
+    public function test_signed_in_order_uses_account_email_as_contact(): void
+    {
+        $this->fakeMidtrans();
+        $this->buyNow(1)->assertCreated()->assertJsonPath('order.contact.email', $this->user->email);
     }
 }
